@@ -131,6 +131,16 @@ export default defineComponent({
       classes.push(this.borderClasses);
       return classes.filter(Boolean);
     },
+    dateContainerClasses(): string[] {
+      /**
+       * Used to accomodate extending compoents where the input is contained in
+       * a div eg AutoComplete
+       */
+      const classes: string[] = [];
+      classes.push(...this.baseContainerClasses);
+      classes.push(this.containerReadOnlyClasses);
+      return classes.filter(Boolean);
+    },
     baseContainerClasses(): string[] {
       return ['rounded'];
     },
