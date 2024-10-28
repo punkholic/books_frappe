@@ -4,47 +4,18 @@
       {{ df.label }}
     </div>
     <input
-      v-show="showInput"
+      v-show="true"
       ref="input"
-      :class="[inputClasses, containerClasses ,'date-picker' ]"
+      :class="[inputClasses, dateContainerClasses, ,'date-picker' ]"
       :type="inputType"
       :value="inputValue"
       :placeholder="inputPlaceholder"
       :readonly="isReadOnly"
-      :tabindex="isReadOnly ? '-1' : '0'"
       @blur="onBlur"
       @focus="onFocus"
       @input="(e) => $emit('input', e)"
     />
-    <div
-      v-show="!showInput"
-      class="flex"
-      :class="[containerClasses, sizeClasses]"
-      tabindex="0"
-      @click="activateInput"
-      @focus="activateInput"
-    >
-      <p
-        v-if="!isEmpty"
-        :class="[baseInputClasses]"
-        class="overflow-auto no-scrollbar whitespace-nowrap dark:text-gray-100"
-      >
-        {{ formattedValue }}
-      </p>
-      <p v-else-if="inputPlaceholder" class="text-base text-gray-500 w-full">
-        {{ inputPlaceholder }}
-      </p>
-
-      <button v-if="!isReadOnly" class="-me-0.5 ms-1">
-        <FeatherIcon
-          name="calendar"
-          class="w-4 h-4"
-          :class="
-            showMandatory ? 'text-red-600' : 'text-gray-600 dark:text-gray-400'
-          "
-        />
-      </button>
-    </div>
+   
   </div>
 </template>
 <script lang="ts">
@@ -52,6 +23,7 @@ import { DateTime } from 'luxon';
 import { fyo } from 'src/initFyo';
 import { defineComponent, nextTick } from 'vue';
 import Base from './Base.vue';
+// @ts-ignore
 import NepaliDatePicker from '@anuz-pandey/nepali-date-picker'
 
 export default defineComponent({
@@ -59,7 +31,8 @@ export default defineComponent({
   emits: ['input', 'focus'],
   data() {
     return {
-      showInput: false,
+      NepaliDatePickerObject: null,
+      showInput: true,
     };
   },
   computed: {
@@ -82,6 +55,7 @@ export default defineComponent({
       const value = this.parse(this.value);
       return fyo.format(value, this.df, this.doc);
     },
+  
     borderClasses(): string {
       if (!this.border) {
         return '';
@@ -100,6 +74,14 @@ export default defineComponent({
       return border + ' ' + background;
     },
   },
+
+  mounted() {
+    // Initialize the Nepali date picker on the input element when the component mounts
+    const nepaliDateInput = this.$refs.input;
+    if (nepaliDateInput) {
+      this.NepaliDatePickerObject = new NepaliDatePicker('.date-picker');
+    }
+  },
   methods: {
     onFocus(e: FocusEvent) {
       const target = e.target;
@@ -116,6 +98,7 @@ export default defineComponent({
       if (!(target instanceof HTMLInputElement)) {
         return;
       }
+
       this.showInput = false;
 
       let value: Date | null = DateTime.fromISO(target.value).toJSDate();
@@ -133,9 +116,10 @@ export default defineComponent({
       this.showInput = true;
       nextTick(() => {
         this.focus();
-
+ 
+ 
         // @ts-ignore
-        this.$refs.input = new NepaliDatePicker('.date-picker')
+        this.$refs.input = new NepaliDatePicker('.date-picker');
       });
     },
   },
