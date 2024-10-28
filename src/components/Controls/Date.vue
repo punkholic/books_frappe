@@ -6,7 +6,7 @@
     <input
       v-show="showInput"
       ref="input"
-      :class="[inputClasses, containerClasses]"
+      :class="[inputClasses, containerClasses ,'date-picker' ]"
       :type="inputType"
       :value="inputValue"
       :placeholder="inputPlaceholder"
@@ -52,6 +52,7 @@ import { DateTime } from 'luxon';
 import { fyo } from 'src/initFyo';
 import { defineComponent, nextTick } from 'vue';
 import Base from './Base.vue';
+import NepaliDatePicker from '@anuz-pandey/nepali-date-picker'
 
 export default defineComponent({
   extends: Base,
@@ -134,7 +135,7 @@ export default defineComponent({
         this.focus();
 
         // @ts-ignore
-        this.$refs.input.showPicker();
+        this.$refs.input = new NepaliDatePicker('.date-picker')
       });
     },
   },
