@@ -11,6 +11,7 @@
       :value="inputValue"
       :placeholder="inputPlaceholder"
       :readonly="isReadOnly"
+      :disabled="isReadOnly"
       @blur="onBlur"
       @focus="onFocus"
       @input="(e) => $emit('input', e)"
@@ -83,6 +84,7 @@ export default defineComponent({
     },
   },
   mounted() {
+    console.log(this.isReadOnly)
       // Initialize the Nepali date picker on the input element when the component mounts
       const nepaliDateInput = this.$refs.input;
       if (nepaliDateInput) {
