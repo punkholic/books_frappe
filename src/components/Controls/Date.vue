@@ -25,14 +25,16 @@ import { defineComponent, nextTick } from 'vue';
 import Base from './Base.vue';
 // @ts-ignore
 import NepaliDatePicker from '@anuz-pandey/nepali-date-picker'
+import NepaliDate from 'nepali-date-converter'
+
 
 export default defineComponent({
   extends: Base,
   emits: ['input', 'focus'],
   data() {
     return {
+      showInput: false,
       NepaliDatePickerObject: null,
-      showInput: true,
     };
   },
   computed: {
@@ -41,6 +43,13 @@ export default defineComponent({
       if (typeof value === 'string') {
         value = new Date(value);
       }
+      
+      try{
+        const [year, month, date] = DateTime.fromJSDate(value).toISODate().split("-")
+        let date1 = new NepaliDate(new Date(year, date, month))
+  
+        value = new Date(date1.getYear(), date1.getMonth(), date1.getDay());
+      }catch(e){}
 
       if (value instanceof Date && !Number.isNaN(value.valueOf())) {
         return DateTime.fromJSDate(value).toISODate();
@@ -55,7 +64,6 @@ export default defineComponent({
       const value = this.parse(this.value);
       return fyo.format(value, this.df, this.doc);
     },
-  
     borderClasses(): string {
       if (!this.border) {
         return '';
@@ -74,14 +82,14 @@ export default defineComponent({
       return border + ' ' + background;
     },
   },
-
   mounted() {
-    // Initialize the Nepali date picker on the input element when the component mounts
-    const nepaliDateInput = this.$refs.input;
-    if (nepaliDateInput) {
-      this.NepaliDatePickerObject = new NepaliDatePicker('.date-picker');
-    }
-  },
+      // Initialize the Nepali date picker on the input element when the component mounts
+      const nepaliDateInput = this.$refs.input;
+      if (nepaliDateInput) {
+        // @ts-ignore
+        this.NepaliDatePickerObject = new NepaliDatePicker('.date-picker');
+      }
+    },
   methods: {
     onFocus(e: FocusEvent) {
       const target = e.target;
@@ -98,7 +106,6 @@ export default defineComponent({
       if (!(target instanceof HTMLInputElement)) {
         return;
       }
-
       this.showInput = false;
 
       let value: Date | null = DateTime.fromISO(target.value).toJSDate();
@@ -116,10 +123,9 @@ export default defineComponent({
       this.showInput = true;
       nextTick(() => {
         this.focus();
- 
- 
+
         // @ts-ignore
-        this.$refs.input = new NepaliDatePicker('.date-picker');
+        this.$refs.input = this.NepaliDatePickerObject;
       });
     },
   },
