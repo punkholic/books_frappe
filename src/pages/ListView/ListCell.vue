@@ -10,6 +10,7 @@ import { Field } from 'schemas/types';
 import { fyo } from 'src/initFyo';
 import { isNumeric } from 'src/utils';
 import { defineComponent, PropType } from 'vue';
+import NepaliDate from 'nepali-date-converter'
 
 type Column = ColumnConfig | Field;
 
@@ -29,9 +30,17 @@ export default defineComponent({
   },
   computed: {
     columnValue(): string {
-      const column = this.column;
-      const value = this.row[this.column.fieldname];
+      
+      if(this.column.fieldname == 'date'){
+        this.column.fieldtype = 'strings'
+        
+        let originalDate = new Date(this.row[this.column.fieldname])
+        let nepaliDate = new NepaliDate(new Date(originalDate.getFullYear(), originalDate.getDate(), originalDate.getMonth() + 1))
+        this.row[this.column.fieldname] = nepaliDate.format('DD-MMMM-YYYY')
+      }
 
+      const column = this.column;
+      let value = this.row[this.column.fieldname];
       if (isField(column)) {
         return fyo.format(value, column);
       }
