@@ -3,20 +3,10 @@
     <div v-if="showLabel" :class="labelClasses">
       {{ df.label }}
     </div>
-    <input
-      v-show="true"
-      ref="input"
-      :class="[inputClasses, dateContainerClasses, ,'date-picker' ]"
-      :type="inputType"
-      :value="inputValue"
-      :placeholder="inputPlaceholder"
-      :readonly="isReadOnly"
-      :disabled="isReadOnly"
-      @blur="onBlur"
-      @focus="onFocus"
-      @input="(e) => $emit('input', e)"
-    />
-   
+    <input v-show="true" ref="input" :class="[inputClasses, dateContainerClasses, , 'date-picker', 'w-64']"
+      :type="inputType" :value="inputValue" :placeholder="inputPlaceholder" :readonly="isReadOnly"
+      :disabled="isReadOnly" @blur="onBlur" @focus="onFocus" @input="(e) => $emit('input', e)" />
+
   </div>
 </template>
 <script lang="ts">
@@ -44,13 +34,13 @@ export default defineComponent({
       if (typeof value === 'string') {
         value = new Date(value);
       }
-      
-      try{
+
+      try {
         const [year, month, date] = DateTime.fromJSDate(value).toISODate().split("-")
         let date1 = new NepaliDate(new Date(year, date, month))
-  
+
         value = new Date(date1.getYear(), date1.getMonth(), date1.getDay());
-      }catch(e){}
+      } catch (e) { }
 
       if (value instanceof Date && !Number.isNaN(value.valueOf())) {
         return DateTime.fromJSDate(value).toISODate();
@@ -85,13 +75,34 @@ export default defineComponent({
   },
   mounted() {
     console.log(this.isReadOnly)
-      // Initialize the Nepali date picker on the input element when the component mounts
-      const nepaliDateInput = this.$refs.input;
-      if (nepaliDateInput) {
-        // @ts-ignore
-        this.NepaliDatePickerObject = new NepaliDatePicker('.date-picker');
+    // Initialize the Nepali date picker on the input element when the component mounts
+    const nepaliDateInput = this.$refs.input;
+    if (nepaliDateInput) {
+      //Orentation condition according X value(<500 || >500)
+      // @ts-ignore
+      let positionX = nepaliDateInput.getBoundingClientRect().x < 500 ? 'left' : 'right';
+      let config = {
+        format: 'YYYY-MM-DD',           // 'YYYY-MM-DD', 'YYYY/MM/DD', 'YYYY.MM.DD', 'DD-MM-YYYY', 'DD/MM/YYYY', 'DD.MM.YYYY'  
+        disableAfterToday: false,       // boolean: true | false
+        disableBeforeToday: false,      // boolean: true | false
+        disableToday: false,            // boolean: true | false
+        closeOnDateSelect: true,        // boolean: true | false
+        markHolidays: true,             // boolean: true | false
+        holidays: ['Saturday'],         // ['Saturday', 'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday']
+        indicateCurrentDate: true,      // boolean: true | false
+        setCurrentDate: false,          // boolean: true | false
+        position: positionX,               // 'left', 'right' or 'center'
+        daysFormat: 'dd',               // 'ddd' for full day name, 'dd' for short day name, 'd' for 1 letter day name
+        locale: 'np',                   // 'np' for nepali, 'en' for english
+        theme: 'flat',                  // bordered | soft | flat
+        darkMode: false,                // boolean: true | false
+        inline: false,                  // boolean: true | false
       }
-    },
+
+      // @ts-ignore
+      this.NepaliDatePickerObject = new NepaliDatePicker('.date-picker', config);
+    }
+  },
   methods: {
     onFocus(e: FocusEvent) {
       const target = e.target;
