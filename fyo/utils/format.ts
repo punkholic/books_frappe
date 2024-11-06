@@ -92,11 +92,10 @@ function formatDate(value: unknown, fyo: Fyo): string {
     return '';
   }
 
-  const dateFormat =
-    (fyo.singles.SystemSettings?.dateFormat as string) ?? DEFAULT_DATE_FORMAT;
+  const dateFormat = "MM-d-y";
+    const dateTime = toDatetime(value);
 
-  const dateTime = toDatetime(value);
-  if (!dateTime) {
+    if (!dateTime) {
     return '';
   }
 
@@ -104,7 +103,7 @@ function formatDate(value: unknown, fyo: Fyo): string {
   if (value === 'Invalid DateTime') {
     return '';
   }
-
+  console.log(formattedDate, dateFormat)
   return formattedDate;
 }
 
