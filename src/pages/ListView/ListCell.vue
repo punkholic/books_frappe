@@ -32,11 +32,9 @@ export default defineComponent({
     columnValue(): string {
       
       if(this.column.fieldname == 'date'){
-        this.column.fieldtype = 'strings'
-        
-        let originalDate = new Date(this.row[this.column.fieldname])
-        let nepaliDate = new NepaliDate(new Date(originalDate.getFullYear(), originalDate.getDate(), originalDate.getMonth() + 1))
-        this.row[this.column.fieldname] = nepaliDate.format('DD-MMMM-YYYY')
+          let originalDate = new Date(this.row[this.column.fieldname])
+          let nepaliDate = new NepaliDate(new Date(originalDate.getFullYear(), originalDate.getDate(), originalDate.getMonth() + 1))
+          this.row[this.column.fieldname] = new Date(nepaliDate.getYear(), nepaliDate.getMonth(), nepaliDate.getDay());
       }
 
       const column = this.column;
